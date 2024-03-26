@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    
+</head>
+<style>
+    .container{
+        margin: 20px 500px;
+        width: 400px;
+        height: 20%;
+        border: 1px;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 0 10PX inset;
+    }
+    input[type="text"]{
+        padding: 10px;
+        margin: 10px;
+        border-radius: 30px;
+        width: 60%;
+    }
+    #submit-btn{
+        padding:10px;
+        border-radius: 30px;
+        margin: 0 40px;
+        background-color: greenyellow;
+    }
+    #submit-btn:active{
+        transform: scale(0.9);
+    }
+</style>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <div class="city-input">
+            <input type="text" id="city-input" placeholder="CITY NAME IN UPPERCASE"><br>
+            <button id="submit-btn">Get Weather</button>
+        </div>
+        <div class="weather-container">
+            <h2>Current Weather</h2>
+            <div id="weather"></div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    const apiKey = '6e400be043240b05abf11c104193a1f0';
+    const submitBtn = document.getElementById('submit-btn');
+
+    submitBtn.addEventListener('click', function () {
+        const cityInput = document.getElementById('city-input').value;
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityInput}&appid=${apiKey}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const weatherElement = document.getElementById('weather');
+                const temperature = Math.round(data.main.temp - 273.15); 
+                const weatherDescription = data.weather[0].description;
+                const cityName = data.name;
+                const country = data.sys.country;
+
+                weatherElement.innerHTML = `<p>Location: ${cityName}, ${country}</p>
+                                            <p>Temperature: ${temperature}°C</p>
+                                            <p>Weather: ${weatherDescription}</p>`;
+            })
+            .catch(error => {
+                console.log('Error fetching weather data:', error);
+                const weatherElement = document.getElementById('weather');
+                weatherElement.innerHTML = '<p>Failed to fetch weather data. Please try again later.</p>';
+            });
+    });
+});
+
+    </script>
+</body>
+</html>
